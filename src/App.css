@@ -1,0 +1,19 @@
+html {
+  height: 100vh;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: Arial, sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: rgb(40, 110, 255);
+}
+
+.App {
+  color: rgb(255, 255, 255);
+  text-align: center;
+}
