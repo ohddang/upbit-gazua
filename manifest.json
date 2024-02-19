@@ -1,0 +1,8 @@
+{
+  "manifest_version": 3,
+  "version": "1.0.0",
+  "name": "Upbit Gazua",
+  "action": {
+    "default_popup": "index.html"
+  }
+}
