@@ -1,6 +1,11 @@
 import React from 'react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import './App.css';
+
+const getStorage = async () => {
+  const storage = await chrome.storage.local.get(['distribution']);
+  return storage;
+};
 
 const App = () => {
   const [distribution, setDistribution] = useState<number>(1);
@@ -18,6 +23,12 @@ const App = () => {
       ? (button as HTMLButtonElement).classList.add('selected')
       : (button as HTMLButtonElement).classList.remove('selected');
   });
+
+  useEffect(() => {
+    getStorage().then((storage) => {
+      setDistribution(storage.distribution || 1);
+    });
+  }, []);
 
   return (
     <div className="App">

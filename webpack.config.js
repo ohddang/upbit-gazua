@@ -1,11 +1,14 @@
 const path = require('path');
-const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CopyPlugin = require('copy-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 module.exports = {
   // entry: 웹팩에게 어플리케이션이 어디서 시작하고 어디서부터 파일들을 묶을건지 시작점을 정해준다.
-  entry: './src/index.tsx',
+  entry: {
+    background: './src/background/background.ts',
+    popup: './src/popup.tsx',
+    contentScript: './src/contentScript/contentScript.ts',
+  },
   // 현재 개발 모드에서 작업 중임을 알려줌.
   mode: 'development',
   // export한 JS 모듈이 어떻게 변환되는지 정의한다. 방법은 rules에 정의한 대로 이루어진다.
@@ -37,7 +40,7 @@ module.exports = {
     path: path.resolve(__dirname, 'dist/'),
     // 번들이 생기는 경로를 지정. webpack-dev-server도 이를 참조
     publicPath: '/dist/',
-    filename: 'bundle.js',
+    filename: '[name].js',
   },
   // webpack-dev-server의 옵션을 설정
   devServer: {
@@ -54,13 +57,14 @@ module.exports = {
     hot: true,
   },
   plugins: [
-    new webpack.HotModuleReplacementPlugin(),
     new CopyPlugin({
       patterns: [{ from: 'manifest.json', to: '' }],
     }),
     new HtmlWebpackPlugin({
       // 번들링된 JS를 주입하고 결과물을 옮길 대상이 되는 파일을 지정
-      template: './public/index.html',
+      filename: 'popup.html',
+      template: './public/popup.html',
+      inject: false,
     }),
     new CleanWebpackPlugin(),
   ],

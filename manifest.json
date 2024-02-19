@@ -3,8 +3,17 @@
   "version": "1.0.0",
   "name": "Upbit Gazua",
   "action": {
-    "default_popup": "index.html"
+    "default_popup": "popup.html"
   },
-
-  "permissions": ["storage", "scripting"]
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://upbit.com/*"],
+      "js": ["contentScript.js"]
+    }
+  ],
+  "permissions": ["storage", "tabs", "scripting", "webNavigation"],
+  "host_permissions": ["https://upbit.com/*"]
 }
