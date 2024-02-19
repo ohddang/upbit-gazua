@@ -10,10 +10,34 @@ body {
   justify-content: center;
   align-items: center;
   height: 100vh;
-  background-color: rgb(40, 110, 255);
 }
 
 .App {
   color: rgb(255, 255, 255);
   text-align: center;
+}
+
+.distribution_container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: row;
+
+  margin: 0;
+  padding: 0;
+  gap: 5px;
+}
+
+.distribution_container > button {
+  width: 40px;
+  text-align: center;
+  background-color: #f0f0f0;
+}
+
+.distribution_container > button.selected {
+  background-color: #4b8bf4;
+}
+
+.distribution_container > button:hover {
+  background-color: #c0c0c0;
 }
