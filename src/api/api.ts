@@ -17,7 +17,7 @@ export interface MarketInfo {
   };
 }
 
-export interface MarketPrice {
+export interface MarketCandle {
   market: string;
   candle_date_time_utc: string;
   candle_date_time_kst: string;
@@ -31,6 +31,35 @@ export interface MarketPrice {
   unit: number;
 }
 
+export interface MarketPrice {
+  market: string;
+  trade_date: string;
+  trade_time: string;
+  trade_date_kst: string;
+  trade_time_kst: string;
+  trade_timestamp: number;
+  opening_price: number;
+  high_price: number;
+  low_price: number;
+  trade_price: number;
+  prev_closing_price: number;
+  change: string;
+  change_price: number;
+  change_rate: number;
+  signed_change_price: number;
+  signed_change_rate: number;
+  trade_volume: number;
+  acc_trade_price: number;
+  acc_trade_price_24h: number;
+  acc_trade_volume: number;
+  acc_trade_volume_24h: number;
+  highest_52_week_price: number;
+  highest_52_week_date: string;
+  lowest_52_week_price: number;
+  lowest_52_week_date: string;
+  timestamp: number;
+}
+
 const MarketAllOptions = {
   url: "https://api.upbit.com/v1/market/all?isDetails=true",
   method: "GET",
@@ -39,9 +68,19 @@ const MarketAllOptions = {
   },
 };
 
-const MarketPriceOptions = (market: string, minute: number) => {
+const MarketCandleOptions = (market: string, minute: number) => {
   return {
-    url: `https://api.upbit.com/v1/candles/minutes/${minute}?market=${market}&count=2`,
+    url: `https://api.upbit.com/v1/candles/minutes/${minute}?market=${market}&count=1`,
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  };
+};
+
+const MarketPriceOptions = (market: string) => {
+  return {
+    url: `https://api.upbit.com/v1/ticker?markets=${market}`,
     method: "GET",
     headers: {
       "Content-Type": "application/json",
@@ -68,12 +107,35 @@ export const getMarketList = async (): Promise<MarketInfo[] | undefined> => {
   }
 };
 
-export const getMarketPrice = async (market: string, minute: number): Promise<MarketPrice[] | undefined> => {
+export const getMarketCandle = async (market: string, minute: number): Promise<MarketCandle[] | undefined> => {
   try {
-    const response = await axios(MarketPriceOptions(market, minute));
+    const response = await axios(MarketCandleOptions(market, minute));
 
     if (200 === response.status) {
-      return response.data;
+      if (Array.isArray(response.data) && response.data.every((item) => typeof item === "object")) {
+        return response.data;
+      } else {
+        throw new Error("Invalid data format");
+      }
+    } else {
+      throw new Error("get coin list failed");
+    }
+  } catch (error) {
+    console.log("error ", error);
+    return undefined;
+  }
+};
+
+export const getMarketPrice = async (market: string): Promise<MarketPrice[] | undefined> => {
+  try {
+    const response = await axios(MarketPriceOptions(market));
+
+    if (200 === response.status) {
+      if (Array.isArray(response.data) && response.data.every((item) => typeof item === "object")) {
+        return response.data;
+      } else {
+        throw new Error("Invalid data format");
+      }
     } else {
       throw new Error("get coin list failed");
     }
