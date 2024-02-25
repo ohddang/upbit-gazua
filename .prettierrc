@@ -1,6 +1,6 @@
 {
   "arrowParens": "always",
-  "bracketSameLine": false,
+  "bracketSameLine": true,
   "bracketSpacing": true,
   "embeddedLanguageFormatting": "auto",
   "htmlWhitespaceSensitivity": "css",
@@ -12,7 +12,7 @@
   "requirePragma": false,
   "semi": true,
   "singleAttributePerLine": false,
-  "singleQuote": true,
+  "singleQuote": false,
   "tabWidth": 2,
   "trailingComma": "es5",
   "useTabs": false,
