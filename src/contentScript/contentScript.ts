@@ -1,8 +1,11 @@
-import { compareMarketPrice, findTargetMarket, initMarketList } from "../worker/worker";
+import { compareMarketPrice, findTargetMarket, getFilteredMarketList, initMarketList } from "../worker/worker";
+import { emphasizeMarket } from "./emphasizeMarket";
 
 initMarketList();
 
 setInterval(() => {
   compareMarketPrice();
   findTargetMarket();
-}, 1050);
+
+  emphasizeMarket(getFilteredMarketList());
+}, 1100);

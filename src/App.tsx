@@ -63,7 +63,7 @@ const App = () => {
     getStorage("showCount").then((storage) => {
       if (storage.showCount === undefined) setStorage("showCount", 3);
       setShowCount(storage.showCount || 3);
-    });
+    }); // 마켓변경 시 데이터 클리어
   }, []);
 
   return (
