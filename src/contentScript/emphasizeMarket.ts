@@ -1,5 +1,6 @@
 import "./content.css";
 import { targetMarketInfo } from "../worker/worker";
+import { getAccTradePriceText, getStorage, getTimeTextFromMinute } from "../utils/common";
 
 const getParent = (element: HTMLElement, depth: number) => {
   let parent = element;
@@ -29,35 +30,44 @@ export const emphasizeMarket = (items: targetMarketInfo[]) => {
   });
   const sortedItems = items.slice(0, items.length);
 
-  sortedItems.forEach((item, index) => {
-    const tr = document.createElement("tr");
+  getStorage("minute").then((res) => {
+    const fragment = document.createDocumentFragment();
 
-    const td1 = document.createElement("td");
-    const td2 = document.createElement("td");
-    const td3 = document.createElement("td");
-    const td4 = document.createElement("td");
-    const td5 = document.createElement("td");
-    const td6 = document.createElement("td");
+    sortedItems.forEach((item, index) => {
+      const tr = document.createElement("tr");
 
-    td2.innerText = String(sortedItems.length - index);
-    td3.innerText = item.name;
-    td4.innerText = item.gapPercent.toFixed(2) + "%";
+      const td1 = document.createElement("td");
+      const td2 = document.createElement("td");
+      const td3 = document.createElement("td");
+      const td4 = document.createElement("td");
+      const td5 = document.createElement("td");
+      const td6 = document.createElement("td");
 
-    td2.classList.add("gazua_emphasize_num");
-    td3.classList.add("gazua_emphasize_name");
-    td4.classList.add("gazua_emphasize_gap");
+      td2.innerText = String(sortedItems.length - index);
+      td3.innerText = item.name;
+      td4.innerText = item.gapPercent.toFixed(2) + "%";
+      td5.innerText = getTimeTextFromMinute(res.minute) + "전 대비";
+      td6.innerText = getAccTradePriceText(item.accTradePrice24h);
 
-    tr.appendChild(td1);
-    tr.appendChild(td2);
-    tr.appendChild(td3);
-    tr.appendChild(td4);
-    tr.appendChild(td5);
-    tr.appendChild(td6);
+      td2.classList.add("gazua_emphasize_num");
+      td3.classList.add("gazua_emphasize_name");
+      td4.classList.add("gazua_emphasize_gap");
+      td5.classList.add("gazua_emphasize_time");
+      td6.classList.add("gazua_emphasize_trade_price");
 
-    tr.classList.add("gazua_emphasize");
+      tr.appendChild(td1);
+      tr.appendChild(td2);
+      tr.appendChild(td3);
+      tr.appendChild(td4);
+      tr.appendChild(td5);
+      tr.appendChild(td6);
 
-    if (tableBody) {
-      tableBody.prepend(tr);
-    }
+      tr.classList.add("gazua_emphasize");
+      fragment.prepend(tr);
+
+      if (tableBody) {
+        tableBody.prepend(fragment);
+      }
+    });
   });
 };

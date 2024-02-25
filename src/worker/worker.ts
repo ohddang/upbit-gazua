@@ -1,11 +1,12 @@
 import { getMarketList, getMarketCandle, MarketInfo, getMarketPrice } from "../api/api";
-import { getStorage } from "../utils/storage";
+import { getStorage } from "../utils/common";
 
 export interface targetMarketInfo {
   name: string;
   prevPrice: number;
   curPrice: number;
   gapPercent: number;
+  accTradePrice24h: number;
 }
 
 interface requestMarketInfo extends MarketInfo {
@@ -112,11 +113,11 @@ const requestMarketInfo = async (
   index: number
 ) => {
   const time = new Date().getTime();
-  const marketCandle = await getMarketCandle(market, minute);
+  const [marketCandle, marketPrice] = await Promise.all([getMarketCandle(market, minute), getMarketPrice(market)]); //getMarketCandle(market, minute);
   const diff = new Date().getTime() - time;
   if (index % 50 === 0) console.log("request time", diff, "ms");
 
-  if (marketCandle) {
+  if (marketCandle && marketPrice) {
     const find = targetMarketList.findIndex((item) => item.name === name);
 
     const newItem: targetMarketInfo = {
@@ -124,6 +125,7 @@ const requestMarketInfo = async (
       prevPrice: marketCandle[1].trade_price,
       curPrice: marketCandle[0].trade_price,
       gapPercent: ((marketCandle[0].trade_price - marketCandle[1].trade_price) / marketCandle[0].trade_price) * 100,
+      accTradePrice24h: marketPrice[0].acc_trade_price_24h,
     };
 
     if (find === -1) {

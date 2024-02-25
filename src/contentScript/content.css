@@ -17,7 +17,18 @@
 }
 
 .gazua_emphasize > .gazua_emphasize_gap {
-  text-align: right;
+  text-align: center;
   font-weight: bold;
   color: #d24f45;
+}
+
+.gazua_emphasize > .gazua_emphasize_time {
+  text-align: right;
+  font-size: 0.8em;
+}
+
+.gazua_emphasize > .gazua_emphasize_trade_price {
+  text-align: right;
+  padding-right: 15px;
+  font-size: 0.9em;
 }

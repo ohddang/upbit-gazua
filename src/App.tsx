@@ -1,7 +1,7 @@
 import "./App.css";
 
 import React, { useState, useEffect } from "react";
-import { getStorage, setStorage } from "./utils/storage";
+import { getStorage, setStorage } from "./utils/common";
 import ButtonGroup, { ButtonInfo } from "./components/buttonGroup/buttonGroup";
 
 const marketButtonList: ButtonInfo[] = [
