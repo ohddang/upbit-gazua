@@ -70,7 +70,7 @@ const MarketAllOptions = {
 
 const MarketCandleOptions = (market: string, minute: number) => {
   return {
-    url: `https://api.upbit.com/v1/candles/minutes/${minute}?market=${market}&count=1`,
+    url: `https://api.upbit.com/v1/candles/minutes/${minute}?market=${market}&count=2`,
     method: "GET",
     headers: {
       "Content-Type": "application/json",

@@ -1,0 +1,23 @@
+.gazua_emphasize {
+  font-family: "Noto Sans KR", "Roboto", sans-serif;
+  background: rgba(255, 0, 0, 0.15);
+}
+
+.gazua_emphasize:hover {
+  background: rgba(255, 0, 0, 0.25);
+}
+
+.gazua_emphasize > .gazua_emphasize_num {
+  text-align: left;
+}
+
+.gazua_emphasize > .gazua_emphasize_name {
+  text-align: left;
+  font-weight: bold;
+}
+
+.gazua_emphasize > .gazua_emphasize_gap {
+  text-align: right;
+  font-weight: bold;
+  color: #d24f45;
+}

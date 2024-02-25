@@ -1,3 +1,4 @@
+import "./content.css";
 import { targetMarketInfo } from "../worker/worker";
 
 const getParent = (element: HTMLElement, depth: number) => {
@@ -15,66 +16,48 @@ export const emphasizeMarket = (items: targetMarketInfo[]) => {
   if (!tabB) return;
   const nameList = tabB.getElementsByTagName("strong");
   if (!nameList) return;
+  const tableBody = tabB.getElementsByTagName("tbody")[0];
 
-  // const tableBody = getParent(nameList[0], 4);
-  // const emphasize = tabB.getElementsByClassName("gazua-emphasize");
-  // for (let i = 0; i < emphasize.length; ++i) {
-  //   if(tableBody.hasChildNodes())
-  //     tableBody.removeChild(emphasize[i]);
-  // }
-
-  let names: string = "";
-  items.forEach((item) => {
-    names += item.name + " ";
-    // const tr = document.createElement("tr");
-    // const tdName = document.createElement("td");
-    // const tdPercent = document.createElement("td");
-    // const tdEtc = document.createElement("td");
-
-    // const name = document.createElement("strong");
-    // const percent = document.createElement("strong");
-    // const etc = document.createElement("strong");
-    // name.innerText = item.name;
-    // percent.innerText = item.gapPercent.toFixed(2) + "%";
-    // etc.innerText = item.curPrice.toFixed(2);
-
-    // tdName.appendChild(name);
-    // tdPercent.appendChild(percent);
-    // tdEtc.appendChild(etc);
-
-    // tdName.classList.add("gazua-emphasize");
-    // tdPercent.classList.add("gazua-emphasize");
-    // tdEtc.classList.add("gazua-emphasize");
-
-    // tr.appendChild(tdName);
-    // tr.appendChild(tdPercent);
-    // tr.appendChild(tdEtc);
-
-    // tableBody.prepend(tr);
-  });
-  for (let i = 0; i < nameList.length; ++i) {
-    if (names.includes(nameList[i].innerText)) {
-      const target = getParent(nameList[i], 3);
-      // const tableBody = getParent(target, 1);
-
-      if (target) {
-        // const copy = target.cloneNode(true) as HTMLElement;
-        // if (copy.classList.contains("gazua-emphasize") === false) {
-        //   copy.style.background = "rgba(255, 0, 0, 0.15)";
-        //   copy.classList.add("gazua-emphasize");
-        //   tableBody.prepend(copy);
-        // }
-        target.style.background = "rgba(255, 0, 0, 0.15)";
-        target.style.fontWeight = "bold";
-        target.classList.add("gazua-emphasize");
-      }
-    } else {
-      const target = getParent(nameList[i], 3);
-      if (target) {
-        target.style.background = "";
-        target.style.fontWeight = "";
-      }
-    }
+  const emphasize = Array.from(tableBody.getElementsByClassName("gazua_emphasize"));
+  for (let i = 0; i < emphasize?.length; ++i) {
+    const parent = getParent(emphasize[i] as HTMLElement, 1);
+    parent.removeChild(emphasize[i]);
   }
-  console.log(names);
+
+  items.sort((a, b) => {
+    return a.gapPercent - b.gapPercent;
+  });
+  const sortedItems = items.slice(0, items.length);
+
+  sortedItems.forEach((item, index) => {
+    const tr = document.createElement("tr");
+
+    const td1 = document.createElement("td");
+    const td2 = document.createElement("td");
+    const td3 = document.createElement("td");
+    const td4 = document.createElement("td");
+    const td5 = document.createElement("td");
+    const td6 = document.createElement("td");
+
+    td2.innerText = String(sortedItems.length - index);
+    td3.innerText = item.name;
+    td4.innerText = item.gapPercent.toFixed(2) + "%";
+
+    td2.classList.add("gazua_emphasize_num");
+    td3.classList.add("gazua_emphasize_name");
+    td4.classList.add("gazua_emphasize_gap");
+
+    tr.appendChild(td1);
+    tr.appendChild(td2);
+    tr.appendChild(td3);
+    tr.appendChild(td4);
+    tr.appendChild(td5);
+    tr.appendChild(td6);
+
+    tr.classList.add("gazua_emphasize");
+
+    if (tableBody) {
+      tableBody.prepend(tr);
+    }
+  });
 };

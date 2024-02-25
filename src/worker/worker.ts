@@ -23,8 +23,6 @@ let currentMarket = "";
 let marketIndex = 0;
 
 export const initMarketList = async () => {
-  console.log("init");
-
   const marketList = await getMarketList();
   if (marketList === undefined) return;
 
@@ -68,8 +66,6 @@ export const filterTargetMarket = async () => {
     targetMarketList.sort((a, b) => {
       return b.gapPercent - a.gapPercent;
     });
-    console.log("filter show", targetMarketList.length, respShowCount.showCount);
-
     return targetMarketList.slice(0, respShowCount.showCount);
   }
   return undefined;
@@ -80,21 +76,18 @@ export const marketChangeChecker = async () => {
   if (respMarket.market === undefined) return;
 
   if (currentMarket !== respMarket.market) {
-    console.log("preclear ", targetMarketList.length, requestQueue.length);
     while (targetMarketList.length > 0) {
       targetMarketList.pop();
     }
     while (requestQueue.length > 0) {
       requestQueue.pop();
     }
-    console.log("clear ", targetMarketList.length, requestQueue.length);
   }
 };
 
 const updateMarketInfo = async (marketList: MarketInfo[], minute: number) => {
   const suspendFlag = requestQueue.length > 0;
 
-  console.log("request Queue ", requestQueue.length);
   while (requestQueue.length > 0) {
     const popItem = requestQueue.pop();
     if (popItem) {
@@ -119,18 +112,18 @@ const requestMarketInfo = async (
   index: number
 ) => {
   const time = new Date().getTime();
-  const [marketCandle, marketPrice] = await Promise.all([getMarketCandle(market, minute), getMarketPrice(market)]);
+  const marketCandle = await getMarketCandle(market, minute);
   const diff = new Date().getTime() - time;
-  if (index % 10 === 0) console.log("request time", diff, "ms");
+  if (index % 50 === 0) console.log("request time", diff, "ms");
 
-  if (marketCandle && marketPrice) {
+  if (marketCandle) {
     const find = targetMarketList.findIndex((item) => item.name === name);
 
     const newItem: targetMarketInfo = {
       name: name,
-      prevPrice: marketCandle[0].trade_price,
-      curPrice: marketPrice[0].trade_price,
-      gapPercent: ((marketPrice[0].trade_price - marketCandle[0].trade_price) / marketCandle[0].trade_price) * 100,
+      prevPrice: marketCandle[1].trade_price,
+      curPrice: marketCandle[0].trade_price,
+      gapPercent: ((marketCandle[0].trade_price - marketCandle[1].trade_price) / marketCandle[0].trade_price) * 100,
     };
 
     if (find === -1) {
