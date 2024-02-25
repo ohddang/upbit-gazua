@@ -1,6 +1,7 @@
 {
   "dependencies": {
     "@types/chrome": "^0.0.260",
+    "axios": "^1.6.7",
     "clean-webpack-plugin": "^4.0.0",
     "html-webpack-plugin": "^5.6.0",
     "react-dom": "^18.2.0"

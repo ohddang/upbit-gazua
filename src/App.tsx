@@ -1,30 +1,39 @@
-import React from "react";
-import { useState, useEffect } from "react";
 import "./App.css";
 
-const getStorage = async (key: string) => {
-  const storage = await chrome.storage.local.get([key]);
-  return storage;
-};
+import React, { useState, useEffect } from "react";
+import { getStorage, setStorage } from "./utils/storage";
 
 const App = () => {
   const [minute, setMinute] = useState<number>(1);
   const [showCount, setShowCount] = useState<number>(3);
+  const [market, setMarket] = useState<string>("KRW");
 
+  const marketGroupRef = React.useRef<HTMLDivElement>(null);
   const minuteGroupRef = React.useRef<HTMLDivElement>(null);
   const showCountGroupRef = React.useRef<HTMLDivElement>(null);
 
+  const onClickMarket = (market: string) => {
+    setStorage("market", market);
+    setMarket(market);
+  };
+
   const onClickMinute = (min: number) => {
-    chrome.storage.local.set({ minute: min }, function () {
-      setMinute(min);
-    });
+    setStorage("minute", min);
+    setMinute(min);
   };
 
   const onClickShowCount = (count: number) => {
-    chrome.storage.local.set({ showCount: count }, function () {
-      setShowCount(count);
-    });
+    setStorage("showCount", count);
+    setShowCount(count);
   };
+
+  useEffect(() => {
+    marketGroupRef.current?.childNodes.forEach((button) => {
+      (button as HTMLButtonElement).id === `market_${market}`
+        ? (button as HTMLButtonElement).classList.add("selected")
+        : (button as HTMLButtonElement).classList.remove("selected");
+    });
+  }, [market]);
 
   useEffect(() => {
     minuteGroupRef.current?.childNodes.forEach((button) => {
@@ -43,16 +52,35 @@ const App = () => {
   }, [showCount]);
 
   useEffect(() => {
+    getStorage("market").then((storage) => {
+      if (storage.market === undefined) setStorage("market", "KRW");
+      setMarket(storage.market || "KRW");
+    });
     getStorage("minute").then((storage) => {
+      if (storage.minute === undefined) setStorage("minute", 1);
       setMinute(storage.minute || 1);
     });
     getStorage("showCount").then((storage) => {
+      if (storage.showCount === undefined) setStorage("showCount", 3);
       setShowCount(storage.showCount || 3);
     });
   }, []);
 
   return (
     <div className="App">
+      <div className="button_title">마켓</div>
+      <div className="button_container" ref={marketGroupRef}>
+        <button id="market_KRW" onClick={() => onClickMarket("KRW")}>
+          원화
+        </button>
+        <button id="market_BTC" onClick={() => onClickMarket("BTC")}>
+          BTC
+        </button>
+        <button id="market_UDST" onClick={() => onClickMarket("USDT")}>
+          USDT
+        </button>
+      </div>
+      <br />
       <div className="button_title">기준 분봉</div>
       <div className="button_container" ref={minuteGroupRef}>
         <button id="minute_1" onClick={() => onClickMinute(1)}>

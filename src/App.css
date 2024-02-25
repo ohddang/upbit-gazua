@@ -13,18 +13,18 @@ body {
 }
 
 .App {
-  font-family: "Noto Sans KR", sans-serif;
+  font-family: "Noto Sans KR", "Roboto", sans-serif;
   padding: 10px;
 }
 
 .button_title {
-  margin-bottom: 3px;
-  font-size: 18px;
+  margin-bottom: 5px;
+  font-size: 16px;
 }
 
 .button_container {
   display: flex;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: center;
   flex-direction: row;
 
