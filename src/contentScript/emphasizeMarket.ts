@@ -103,16 +103,6 @@ export const emphasizeMarket = (items: targetMarketInfo[]) => {
           const calculateDummyCount = frontDummyExist ? sortedItems.length : 0;
           tr.style.display = calculateDummyCount > i ? "none" : "table-row";
 
-          // gazua-emphasize 및 자식없는 요소 필터링
-          const filterStrong = tableRowStrong?.filter((tr) => tr.innerText === sortedItems[i].name);
-          const targetStrong = filterStrong?.filter((tr) => {
-            const parent = getParent(tr, 3);
-            if (parent?.childElementCount !== 0 && parent?.classList.contains("gazua_emphasize")) {
-              return true;
-            }
-            return false;
-          });
-
           tr.addEventListener("click", () => {
             window.location.href = `https://upbit.com/exchange?code=CRIX.UPBIT.${sortedItems[i].market}`;
           });
