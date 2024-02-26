@@ -115,7 +115,7 @@ const requestMarketInfo = async (
   const time = new Date().getTime();
   const [marketCandle, marketPrice] = await Promise.all([getMarketCandle(market, minute), getMarketPrice(market)]); //getMarketCandle(market, minute);
   const diff = new Date().getTime() - time;
-  if (index % 50 === 0) console.log("request time", diff, "ms");
+  // if (index % 50 === 0) console.log("request time", diff, "ms");
 
   if (marketCandle && marketPrice) {
     const find = targetMarketList.findIndex((item) => item.name === name);

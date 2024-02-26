@@ -20,22 +20,15 @@ export const emphasizeMarket = (items: targetMarketInfo[]) => {
   const tableBody = tabB.getElementsByTagName("tbody")[0];
 
   const emphasize = Array.from(tableBody.getElementsByClassName("gazua_emphasize"));
-  for (let i = 0; i < emphasize?.length; ++i) {
-    const parent = getParent(emphasize[i] as HTMLElement, 1);
-    parent.removeChild(emphasize[i]);
-  }
+  const tableRow = Array.from(tableBody.getElementsByTagName("tr"));
 
-  items.sort((a, b) => {
-    return a.gapPercent - b.gapPercent;
-  });
-  const sortedItems = items.slice(0, items.length);
+  const emphasizeMaxCount = 20;
 
-  getStorage("minute").then((res) => {
-    const fragment = document.createDocumentFragment();
+  let frontDummyCount = tableRow[emphasizeMaxCount].childElementCount === 0 ? true : false;
 
-    sortedItems.forEach((item, index) => {
+  if (!emphasize || emphasize.length === 0) {
+    for (let i = 0; i < emphasizeMaxCount; ++i) {
       const tr = document.createElement("tr");
-
       const td1 = document.createElement("td");
       const td2 = document.createElement("td");
       const td3 = document.createElement("td");
@@ -43,11 +36,7 @@ export const emphasizeMarket = (items: targetMarketInfo[]) => {
       const td5 = document.createElement("td");
       const td6 = document.createElement("td");
 
-      td2.innerText = String(sortedItems.length - index);
-      td3.innerText = item.name;
-      td4.innerText = item.gapPercent.toFixed(2) + "%";
-      td5.innerText = getTimeTextFromMinute(res.minute) + "전 대비";
-      td6.innerText = getAccTradePriceText(item.accTradePrice24h);
+      td2.innerText = String(emphasizeMaxCount - i);
 
       td2.classList.add("gazua_emphasize_num");
       td3.classList.add("gazua_emphasize_name");
@@ -62,12 +51,40 @@ export const emphasizeMarket = (items: targetMarketInfo[]) => {
       tr.appendChild(td5);
       tr.appendChild(td6);
 
+      tr.style.display = "none";
       tr.classList.add("gazua_emphasize");
-      fragment.prepend(tr);
 
-      if (tableBody) {
-        tableBody.prepend(fragment);
+      tableBody.prepend(tr);
+    }
+  } else {
+    items.sort((a, b) => {
+      return b.gapPercent - a.gapPercent;
+    });
+    const sortedItems = items.slice(0, items.length);
+
+    getStorage("minute").then((res) => {
+      for (let i = 0; i < emphasizeMaxCount; ++i) {
+        if (sortedItems[i]) {
+          const tr = emphasize[i] as HTMLElement;
+          const tds = Array.from(tr.getElementsByTagName("td"));
+
+          const td3 = tds[2];
+          const td4 = tds[3];
+          const td5 = tds[4];
+          const td6 = tds[5];
+
+          td3.innerText = sortedItems[i].name;
+          td4.innerText = sortedItems[i].gapPercent.toFixed(2) + "%";
+          td5.innerText = getTimeTextFromMinute(res.minute) + "전 대비";
+          td6.innerText = getAccTradePriceText(sortedItems[i].accTradePrice24h);
+
+          const calculateDummyCount = frontDummyCount ? sortedItems.length : 0;
+          tr.style.display = calculateDummyCount > i ? "none" : "table-row";
+        } else {
+          const tr = emphasize[i] as HTMLElement;
+          tr.style.display = "none";
+        }
       }
     });
-  });
+  }
 };
