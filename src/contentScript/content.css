@@ -1,10 +1,6 @@
 .gazua_emphasize {
   font-family: "Noto Sans KR", "Roboto", sans-serif;
-  background: rgba(255, 0, 0, 0.15);
-}
-
-.gazua_emphasize:hover {
-  background: rgba(255, 0, 0, 0.25);
+  background: rgba(255, 0, 0, 0.1);
 }
 
 .gazua_emphasize > .gazua_emphasize_num {
@@ -28,7 +24,20 @@
 }
 
 .gazua_emphasize > .gazua_emphasize_trade_price {
-  text-align: right;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
   padding-right: 15px;
-  font-size: 11px;
+
+  gap: 1px;
+}
+
+.gazua_emphasize > .gazua_emphasize_trade_price > * {
+  text-align: right;
+  font-size: 12px;
+}
+
+.gazua_emphasize > .gazua_emphasize_trade_price > i {
+  font-size: 10px;
+  color: #afb0af;
 }

@@ -2,6 +2,7 @@ import { getMarketList, getMarketCandle, MarketInfo, getMarketPrice } from "../a
 import { getStorage } from "../utils/common";
 
 export interface targetMarketInfo {
+  market: string;
   name: string;
   prevPrice: number;
   curPrice: number;
@@ -21,6 +22,8 @@ const requestQueue: requestMarketInfo[] = [];
 const targetMarketList: targetMarketInfo[] = [];
 
 let currentMarket = "";
+let currentMinute = -1;
+
 let marketIndex = 0;
 
 export const initMarketList = async () => {
@@ -43,7 +46,6 @@ export const compareMarketPrice = async () => {
   const rsepMinute = await getStorage("minute");
 
   if (respMarket.market && rsepMinute.minute) {
-    currentMarket = respMarket.market;
     switch (respMarket.market) {
       case "KRW":
         updateMarketInfo(krwMarketList, rsepMinute.minute);
@@ -83,6 +85,22 @@ export const marketChangeChecker = async () => {
     while (requestQueue.length > 0) {
       requestQueue.pop();
     }
+    currentMarket = respMarket.market;
+  }
+};
+
+export const minuteChangeChecker = async () => {
+  const respMinute = await getStorage("minute");
+  if (respMinute.minute === undefined) return;
+
+  if (currentMinute !== respMinute.minute) {
+    while (targetMarketList.length > 0) {
+      targetMarketList.pop();
+    }
+    while (requestQueue.length > 0) {
+      requestQueue.pop();
+    }
+    currentMinute = respMinute.minute;
   }
 };
 
@@ -96,12 +114,12 @@ const updateMarketInfo = async (marketList: MarketInfo[], minute: number) => {
     }
   }
   if (!suspendFlag) {
-    marketList.slice(marketIndex, marketIndex + 10).forEach((marketInfo, index) => {
+    marketList.slice(marketIndex, marketIndex + 3).forEach((marketInfo, index) => {
       requestMarketInfo(marketList, marketInfo.market, marketInfo.korean_name, minute, marketIndex + index);
     });
 
     // upbit rest api 1초당 10개 제한
-    marketIndex = marketIndex + 10 >= marketList.length ? 0 : (marketIndex += 10);
+    marketIndex = marketIndex + 3 >= marketList.length ? 0 : (marketIndex += 3);
   }
 };
 
@@ -121,6 +139,7 @@ const requestMarketInfo = async (
     const find = targetMarketList.findIndex((item) => item.name === name);
 
     const newItem: targetMarketInfo = {
+      market: market,
       name: name,
       prevPrice: marketCandle[1].trade_price,
       curPrice: marketCandle[0].trade_price,

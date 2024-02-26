@@ -17,6 +17,9 @@ export const getTimeTextFromMinute = (minute: number) => {
   }
 };
 
-export const getAccTradePriceText = (price: number) => {
-  return `${Math.floor(price / 1000000).toLocaleString()}백만`;
+export const getAccTradePriceText = (market: string, price: number) => {
+  if (market.includes("KRW")) return `${Math.floor(price / 1000000).toLocaleString()}`;
+  else if (market.includes("BTC")) return `${parseFloat(price.toFixed(3)).toLocaleString()}`;
+  else if (market.includes("USDT")) return `${parseFloat(price.toFixed(0)).toLocaleString()}`;
+  else return price.toLocaleString();
 };

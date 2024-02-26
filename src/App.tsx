@@ -28,6 +28,10 @@ const showCountButtonList: ButtonInfo[] = [
   { id: "showCount_20", name: "20개", value: 20 },
 ];
 
+const getQueryCodeValue = (value: string) => {
+  return `CRIX.UPBIT.${value}`;
+};
+
 const App = () => {
   const [minute, setMinute] = useState<number>(1);
   const [showCount, setShowCount] = useState<number>(3);

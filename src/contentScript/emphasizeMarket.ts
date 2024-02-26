@@ -1,10 +1,12 @@
 import "./content.css";
 import { targetMarketInfo } from "../worker/worker";
-import { getAccTradePriceText, getStorage, getTimeTextFromMinute } from "../utils/common";
+import { getAccTradePriceText, getStorage, getTimeTextFromMinute, setStorage } from "../utils/common";
 
 const getParent = (element: HTMLElement, depth: number) => {
   let parent = element;
   for (let i = 0; i < depth; i++) {
+    if (!parent.parentElement) return parent;
+
     parent = parent.parentElement as HTMLElement;
   }
   return parent;
@@ -21,11 +23,17 @@ export const emphasizeMarket = (items: targetMarketInfo[]) => {
 
   const emphasize = Array.from(tableBody.getElementsByClassName("gazua_emphasize"));
   const tableRow = Array.from(tableBody.getElementsByTagName("tr"));
+  const tableRowStrong = Array.from(tableBody.getElementsByTagName("strong"));
 
-  const emphasizeMaxCount = 20;
-
-  let frontDummyCount = tableRow[emphasizeMaxCount].childElementCount === 0 ? true : false;
-
+  const emphasizeMaxCount = tableRow.length < 20 ? tableRow.length : 20;
+  let frontDummyExist = false;
+  try {
+    if (tableRow && tableRow.length > 0)
+      frontDummyExist = tableRow[emphasizeMaxCount].childElementCount === 0 ? true : false;
+  } catch (e) {
+    console.log(e, tableRow);
+    frontDummyExist = false;
+  }
   if (!emphasize || emphasize.length === 0) {
     for (let i = 0; i < emphasizeMaxCount; ++i) {
       const tr = document.createElement("tr");
@@ -43,6 +51,11 @@ export const emphasizeMarket = (items: targetMarketInfo[]) => {
       td4.classList.add("gazua_emphasize_gap");
       td5.classList.add("gazua_emphasize_time");
       td6.classList.add("gazua_emphasize_trade_price");
+
+      const ts6 = document.createElement("span");
+      const ti6 = document.createElement("i");
+      td6.appendChild(ts6);
+      td6.appendChild(ti6);
 
       tr.appendChild(td1);
       tr.appendChild(td2);
@@ -73,16 +86,41 @@ export const emphasizeMarket = (items: targetMarketInfo[]) => {
           const td5 = tds[4];
           const td6 = tds[5];
 
+          const ts6 = td6.getElementsByTagName("span")[0];
+          const ti6 = td6.getElementsByTagName("i")[0];
+
           td3.innerText = sortedItems[i].name;
           td4.innerText = sortedItems[i].gapPercent.toFixed(2) + "%";
           td5.innerText = getTimeTextFromMinute(res.minute) + "전 대비";
-          td6.innerText = getAccTradePriceText(sortedItems[i].accTradePrice24h);
+          ts6.innerText = getAccTradePriceText(sortedItems[i].market, sortedItems[i].accTradePrice24h);
 
-          const calculateDummyCount = frontDummyCount ? sortedItems.length : 0;
+          ti6.innerText = sortedItems[i].market.includes("KRW")
+            ? "백만"
+            : sortedItems[i].market.includes("BTC")
+            ? "BTC"
+            : "USDT";
+
+          const calculateDummyCount = frontDummyExist ? sortedItems.length : 0;
           tr.style.display = calculateDummyCount > i ? "none" : "table-row";
+
+          // gazua-emphasize 및 자식없는 요소 필터링
+          const filterStrong = tableRowStrong?.filter((tr) => tr.innerText === sortedItems[i].name);
+          const targetStrong = filterStrong?.filter((tr) => {
+            const parent = getParent(tr, 3);
+            if (parent?.childElementCount !== 0 && parent?.classList.contains("gazua_emphasize")) {
+              return true;
+            }
+            return false;
+          });
+
+          tr.addEventListener("click", () => {
+            window.location.href = `https://upbit.com/exchange?code=CRIX.UPBIT.${sortedItems[i].market}`;
+          });
         } else {
-          const tr = emphasize[i] as HTMLElement;
-          tr.style.display = "none";
+          if (emphasize && emphasize.length > 0) {
+            const tr = emphasize[i] as HTMLElement;
+            if (tr) tr.style.display = "none";
+          }
         }
       }
     });
