@@ -8,6 +8,12 @@ chrome.webNavigation.onHistoryStateUpdated.addListener(async (details) => {
 
   let tab: any = await getCurrentTab();
 
+  let url = new URL(tab.url);
+  if (url.hostname !== "upbit.com") {
+    console.log("not upbit.com");
+    return;
+  }
+
   chrome.scripting.executeScript({
     target: { tabId: tab.id },
     func: () => {}, //this literally will execute an empty function in the current tab which seems to be enough to reload or reconnect the content-script

@@ -10,10 +10,10 @@
   },
   "content_scripts": [
     {
-      "matches": ["https://upbit.com/*"],
+      "matches": ["https://*.upbit.com/*"],
       "js": ["contentScript.js"]
     }
   ],
   "permissions": ["storage", "tabs", "scripting", "webNavigation"],
-  "host_permissions": ["https://upbit.com/*"]
+  "host_permissions": ["https://*.upbit.com/*"]
 }
