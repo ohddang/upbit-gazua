@@ -20,10 +20,10 @@ export const emphasizeMarket = (items: targetMarketInfo[]) => {
   const nameList = tabB.getElementsByTagName("strong");
   if (!nameList) return;
   const tableBody = tabB.getElementsByTagName("tbody")[0];
+  if (!tableBody) return;
 
   const emphasize = Array.from(tableBody.getElementsByClassName("gazua_emphasize"));
   const tableRow = Array.from(tableBody.getElementsByTagName("tr"));
-  const tableRowStrong = Array.from(tableBody.getElementsByTagName("strong"));
 
   const emphasizeMaxCount = tableRow.length < 20 ? tableRow.length : 20;
   let frontDummyExist = false;

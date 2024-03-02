@@ -105,21 +105,24 @@ export const minuteChangeChecker = async () => {
 };
 
 const updateMarketInfo = async (marketList: MarketInfo[], minute: number) => {
+  const INTERVAL = 3;
   const suspendFlag = requestQueue.length > 0;
 
-  while (requestQueue.length > 0) {
-    const popItem = requestQueue.pop();
+  let requestCount = 0;
+  while (requestQueue.length > 0 && requestCount < INTERVAL) {
+    const popItem = requestQueue.shift();
     if (popItem) {
       requestMarketInfo(marketList, popItem.market, popItem.korean_name, minute, popItem.index);
+      ++requestCount;
     }
   }
   if (!suspendFlag) {
-    marketList.slice(marketIndex, marketIndex + 3).forEach((marketInfo, index) => {
-      requestMarketInfo(marketList, marketInfo.market, marketInfo.korean_name, minute, marketIndex + index);
+    marketList.slice(marketIndex, marketIndex + INTERVAL).forEach((marketInfo, index) => {
+      requestMarketInfo(marketList, marketInfo.market, marketInfo.korean_name, minute, marketIndex + index, true);
     });
 
     // upbit rest api 1초당 10개 제한
-    marketIndex = marketIndex + 3 >= marketList.length ? 0 : (marketIndex += 3);
+    marketIndex = marketIndex + INTERVAL >= marketList.length ? 0 : (marketIndex += INTERVAL);
   }
 };
 
@@ -128,12 +131,10 @@ const requestMarketInfo = async (
   market: string,
   name: string,
   minute: number,
-  index: number
+  index: number,
+  retry: boolean = false
 ) => {
-  const time = new Date().getTime();
-  const [marketCandle, marketPrice] = await Promise.all([getMarketCandle(market, minute), getMarketPrice(market)]); //getMarketCandle(market, minute);
-  const diff = new Date().getTime() - time;
-  // if (index % 50 === 0) console.log("request time", diff, "ms");
+  const [marketCandle, marketPrice] = await Promise.all([getMarketCandle(market, minute), getMarketPrice(market)]);
 
   if (marketCandle && marketPrice) {
     const find = targetMarketList.findIndex((item) => item.name === name);
@@ -153,7 +154,7 @@ const requestMarketInfo = async (
       targetMarketList[find] = newItem;
     }
   } else {
-    requestQueue.push({ ...marketList[index], index });
+    if (retry) requestQueue.push({ ...marketList[index], index });
   }
 
   return marketCandle;
