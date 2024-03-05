@@ -8,9 +8,14 @@ chrome.webNavigation.onHistoryStateUpdated.addListener(async (details) => {
 
   let tab: any = await getCurrentTab();
 
-  let url = new URL(tab.url);
-  if (url.hostname !== "upbit.com") {
-    console.log("not upbit.com");
+  try {
+    let url = new URL(tab.url);
+    if (url.hostname !== "upbit.com") {
+      console.log("not upbit.com");
+      return;
+    }
+  } catch (error) {
+    console.error("Invalid URL:", tab.url);
     return;
   }
 
