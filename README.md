@@ -1,8 +1,3 @@
-# create-react-odd
->you can start easily react + typescript + webpack app    
-  
-## How to use
-- npx create-react-odd my-app  
-- cd my-app  
-- npm run build  
-- npm run dev  
+https://chromewebstore.google.com/detail/upbit-gazua/hnjekbfjeongcjipokedmkkjpgffpjop?hl=ko&authuser=0
+
+![thumb_0](https://github.com/ohddang/upbit-gazua/assets/68732996/79785d74-3422-4bb2-82e2-51ce759e6cea)
